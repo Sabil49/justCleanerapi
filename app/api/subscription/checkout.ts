@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     }
 
     const plan = PLANS[planId as keyof typeof PLANS];
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL;
 
     // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
