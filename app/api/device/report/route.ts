@@ -5,7 +5,7 @@ import { requireAuth } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
-    const user = requireAuth(request);
+    const user = await requireAuth(request);
     const { storageUsed, storageFreed, deviceName, osVersion } = await request.json();
 
     if (storageUsed === undefined || storageFreed === undefined || !deviceName) {
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
-    const user = requireAuth(request);
+    const user = await requireAuth(request);
 
     const reports = await prisma.report.findMany({
       where: { userId: user.userId },

@@ -5,7 +5,7 @@ import { requireAuth } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
-    const user = requireAuth(request);
+    const user = await requireAuth(request);
     const { planId } = await request.json();
 
     if (!planId || !['monthly', 'yearly'].includes(planId)) {
