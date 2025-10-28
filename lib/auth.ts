@@ -1,4 +1,4 @@
-// lib/auth.ts
+"use server";
 import * as jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { NextRequest } from 'next/server';
