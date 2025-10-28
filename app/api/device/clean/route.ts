@@ -5,7 +5,7 @@ import { requireAuth } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
-    const user = requireAuth(request);
+    const user = await requireAuth(request);
     const { cleanType, filesRemoved, spaceFreed } = await request.json();
 
     if (!cleanType || filesRemoved === undefined || spaceFreed === undefined) {
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
-    const user = requireAuth(request);
+    const user = await requireAuth(request);
 
     const logs = await prisma.cleanLog.findMany({
       where: { userId: user.userId },
