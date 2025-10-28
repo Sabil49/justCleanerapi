@@ -1,11 +1,13 @@
 {
   "name": "just-cleaner-api",
   "version": "1.0.0",
+  "private": true,
   "description": "JustCleaner Backend API with Next.js",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "lint": "next lint",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:push": "prisma db push",
