@@ -1,4 +1,4 @@
-// app/api/auth/login/route.ts
+
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { verifyPassword, generateToken } from '@/lib/auth';
