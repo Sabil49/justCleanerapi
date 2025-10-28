@@ -20,19 +20,19 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
   return bcrypt.compare(password, hash);
 }
 
-export function generateToken(payload: JWTPayload): string {
+export async function generateToken(payload: JWTPayload): Promise<string> {
   return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
 }
 
-export function verifyToken(token: string): JWTPayload | null {
+export async function verifyToken(token: string): Promise<JWTPayload | null> {
   try {
-    return jwt.verify(token, JWT_SECRET) as JWTPayload;
+    return await jwt.verify(token, JWT_SECRET) as JWTPayload;
   } catch (error) {
     return null;
   }
 }
 
-export function getUserFromRequest(request: NextRequest): JWTPayload | null {
+export async function getUserFromRequest(request: NextRequest): Promise<JWTPayload | null> {
   const authHeader = request.headers.get('authorization');
   
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -43,19 +43,19 @@ export function getUserFromRequest(request: NextRequest): JWTPayload | null {
   return verifyToken(token);
 }
 
-export function requireAuth(request: NextRequest): JWTPayload {
-  const user = getUserFromRequest(request);
+export async function requireAuth(request: NextRequest): Promise<JWTPayload> {
+  const user = await getUserFromRequest(request);
   
   if (!user) {
     throw new Error('Unauthorized');
   }
-  
+
   return user;
 }
 
-export function requirePremium(request: NextRequest): JWTPayload {
-  const user = requireAuth(request);
-  
+export async function requirePremium(request: NextRequest): Promise<JWTPayload> {
+  const user = await requireAuth(request);
+
   if (!user.isPremium) {
     throw new Error('Premium subscription required');
   }
