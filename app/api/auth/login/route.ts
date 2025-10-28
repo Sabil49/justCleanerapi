@@ -1,8 +1,9 @@
 "use server";
+export const dynamic = "force-dynamic";
 
-import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/db';
-import { verifyPassword, generateToken } from '@/lib/auth';
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/db";
+import { verifyPassword, generateToken } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
   try {
@@ -10,33 +11,21 @@ export async function POST(req: NextRequest) {
 
     if (!email || !password) {
       return NextResponse.json(
-        { error: 'Email and password are required' },
+        { error: "Email and password are required" },
         { status: 400 }
       );
     }
 
-    // Find user
-    const user = await prisma.user.findUnique({
-      where: { email },
-    });
-
+    const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
-      return NextResponse.json(
-        { error: 'Invalid credentials' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }
 
-    // Verify password
-    const isValidPassword = await verifyPassword(password, user.password);
-    if (!isValidPassword) {
-      return NextResponse.json(
-        { error: 'Invalid credentials' },
-        { status: 401 }
-      );
+    const isValid = await verifyPassword(password, user.password);
+    if (!isValid) {
+      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }
 
-    // Check if premium has expired
     let isPremium = user.isPremium;
     if (user.isPremium && user.premiumExpiry && user.premiumExpiry < new Date()) {
       isPremium = false;
@@ -46,7 +35,6 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Generate token
     const token = generateToken({
       userId: user.id,
       email: user.email,
@@ -59,17 +47,15 @@ export async function POST(req: NextRequest) {
         name: user.name,
         email: user.email,
         isPremium,
-        premiumExpiry: user.premiumExpiry,
+        premiumExpiry: user.premiumExpiry
+          ? user.premiumExpiry.toISOString()
+          : null,
       },
       token,
-      message: 'Login successful',
+      message: "Login successful",
     });
-
-  } catch (error) {
-    console.error('Login error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+  } catch (err) {
+    console.error("Login error:", err);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
